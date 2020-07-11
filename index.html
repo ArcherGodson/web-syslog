@@ -13,6 +13,18 @@
     padding: 0px;
     margin: 0px;
    }
+  .datetime {
+    color: #999;
+  }
+  .hostname {
+    color: #1c1;
+  }
+  .service {
+    color: #393;
+  }
+  .error {
+    background-color: #311;
+  }
   </style>
 </head>
 <body>
@@ -27,12 +39,18 @@ function writeToScreen(message)
   {
     var pre = document.createElement("p");
     pre.style.wordWrap = "break-word";
-    pre.innerHTML = message;
+    pre.innerHTML = message.replace(/^(([^\s]+[ ]+){3})([^\s]+[ ]+)([^\s]+[ ]+)/i, '<span class="datetime">$1</span><span class="hostname">$3</span><span class="service">$4</span>').replace(/(^.+error.+$)/i,'<span class="error">$1</span>');
     output.appendChild(pre);
+    if(document.getElementsByTagName("p").length > 50) {
+      oldelement = document.getElementsByTagName("p"), 0;
+    //  document.getElementsByTagName("p")[0].innerHTML="";
+      oldelement[0].parentNode.removeChild(oldelement[0])
+    };
+    //console.log(document.getElementsByTagName("p").length)
   }
 
 //new EventSource("ws://185.180.231.39:8088/ws/").onmessage = function(e) {
-new EventSource("http://185.180.231.39:8088").onmessage = function(e) {
+new EventSource("http://syslog.allo:8088").onmessage = function(e) {
   writeToScreen(e.data);
 //  console.log(e.data);
   document.getElementById('bottom').scrollIntoView();
